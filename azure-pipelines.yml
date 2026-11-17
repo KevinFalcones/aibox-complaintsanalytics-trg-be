@@ -7,7 +7,7 @@ pool:
   name: 'selfHosted-win'
 
 variables:
-  azureServiceConnection: 'sc-azure-ai-platform'
+  azureServiceConnection: 'sc-azure-jkjf-dev-interviews-001'
   resourceGroupName: 'rg-ai-platform-dev'
   location: 'eastus2'
 
