@@ -42,22 +42,22 @@ module keyvault 'modules/keyvault.bicep' = {
   }
 }
 
-module functionApp 'modules/function.bicep' = {
-  name: 'deploy-function'
-  params: {
-    location: location
-    functionAppName: functionAppName
-    storageAccountName: storage.outputs.storageAccountName
-    appiConnectionString: monitoring.outputs.appiConnectionString
-    keyVaultUri: keyvault.outputs.keyVaultUri
-    aiEndpoint: ai.outputs.aiEndpoint
-  }
-}
+// module functionApp 'modules/function.bicep' = {
+//   name: 'deploy-function'
+//   params: {
+//     location: location
+//     functionAppName: functionAppName
+//     storageAccountName: storage.outputs.storageAccountName
+//     appiConnectionString: monitoring.outputs.appiConnectionString
+//     keyVaultUri: keyvault.outputs.keyVaultUri
+//     aiEndpoint: ai.outputs.aiEndpoint
+//   }
+// }
 
-module rbac 'modules/rbac.bicep' = {
-  name: 'deploy-rbac'
-  params: {
-    keyVaultName: keyvault.outputs.keyVaultName
-    principalId: functionApp.outputs.principalId // Conecta la Identidad Administrada de la Función
-  }
-}
+// module rbac 'modules/rbac.bicep' = {
+//   name: 'deploy-rbac'
+//   params: {
+//     keyVaultName: keyvault.outputs.keyVaultName
+//     principalId: functionApp.outputs.principalId // Conecta la Identidad Administrada de la Función
+//   }
+// }
