@@ -1,0 +1,76 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  name: 'selfHosted-win'
+
+variables:
+  azureServiceConnection: 'sc-azure-ai-platform'
+  resourceGroupName: 'rg-ai-platform-dev'
+  location: 'eastus2'
+
+stages:
+  - stage: Infrastructure
+    displayName: '1. IaC - Validate and Deploy Bicep'
+    jobs:
+      - job: DeployBicep
+        steps:
+          - task: AzureCLI@2
+            displayName: 'Validate Bicep (What-If)'
+            inputs:
+              azureSubscription: $(azureServiceConnection)
+              scriptType: 'pscore'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az deployment group what-if \
+                  --resource-group $(resourceGroupName) \
+                  --parameters infra/parameters/dev.bicepparam
+
+          - task: AzureCLI@2
+            displayName: 'Apply Infraestructure'
+            inputs:
+              azureSubscription: $(azureServiceConnection)
+              scriptType: 'pscore'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az deployment group create \
+                  --resource-group $(resourceGroupName) \
+                  --parameters infra/parameters/dev.bicepparam
+
+  - stage: Application
+    displayName: '2. App - Build and Deploy AI Python Function'
+    dependsOn: Infrastructure
+    jobs:
+      - job: BuildAndDeployPython
+        steps:
+          - task: UsePythonVersion@0
+            displayName: 'Config Python 3.11'
+            inputs:
+              versionSpec: '3.11'
+
+          - task: Bash@3
+            displayName: 'Install Dependencies'
+            inputs:
+              targetType: 'inline'
+              script: |
+                python -m venv worker_venv
+                source worker_venv/bin/activate
+                pip install -r src/requirements.txt
+
+          - task: ArchiveFiles@2
+            displayName: 'Package Function'
+            inputs:
+              rootFolderOrFile: '$(System.DefaultWorkingDirectory)/src'
+              includeRootFolder: false
+              archiveType: 'zip'
+              archiveFile: '$(Build.ArtifactStagingDirectory)/ai-app.zip'
+
+          - task: AzureFunctionApp@2
+            displayName: 'Deploy Function App'
+            inputs:
+              connectedServiceNameARM: $(azureServiceConnection)
+              appType: 'functionAppLinux'
+              appName: 'func-ai-processor-dev-jkfj'
+              package: '$(Build.ArtifactStagingDirectory)/ai-app.zip'
