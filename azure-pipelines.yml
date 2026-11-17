@@ -44,14 +44,14 @@ stages:
             inputs:
               versionSpec: '3.11'
 
-          - task: Bash@3
-            displayName: 'Install Dependencies'
+          - task: CmdLine@2
+            displayName: 'Install Dependencies (Windows CMD)'
             inputs:
-              targetType: 'inline'
               script: |
                 python -m venv worker_venv
-                source worker_venv/bin/activate
-                pip install -r src/requirements.txt
+                call worker_venv\Scripts\activate.bat
+                pip install -r src\requirements.txt
+
 
           - task: ArchiveFiles@2
             displayName: 'Package Function'
