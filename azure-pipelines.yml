@@ -21,7 +21,7 @@ stages:
             displayName: 'Validate Bicep (What-If)'
             inputs:
               azureSubscription: $(azureServiceConnection)
-              scriptType: 'pscore'
+              scriptType: 'bash'
               scriptLocation: 'inlineScript'
               inlineScript: |
                 az deployment group what-if \
@@ -32,7 +32,7 @@ stages:
             displayName: 'Apply Infraestructure'
             inputs:
               azureSubscription: $(azureServiceConnection)
-              scriptType: 'pscore'
+              scriptType: 'bash'
               scriptLocation: 'inlineScript'
               inlineScript: |
                 az deployment group create \
