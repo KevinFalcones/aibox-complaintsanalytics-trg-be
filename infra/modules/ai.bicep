@@ -9,6 +9,9 @@ resource aiService 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
   properties: {
     customSubDomainName: aiServiceName
     publicNetworkAccess: 'Enabled'
+    networkAcls: {
+      defaultAction: 'Allow'
+    }
   }
 }
 

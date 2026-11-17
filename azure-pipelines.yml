@@ -21,23 +21,17 @@ stages:
             displayName: 'Validate Bicep (What-If)'
             inputs:
               azureSubscription: $(azureServiceConnection)
-              scriptType: 'bash'
+              scriptType: 'ps'
               scriptLocation: 'inlineScript'
-              inlineScript: |
-                az deployment group what-if \
-                  --resource-group $(resourceGroupName) \
-                  --parameters infra/parameters/dev.bicepparam
+              inlineScript: 'az deployment group what-if --resource-group $(resourceGroupName) --parameters infra/parameters/dev.bicepparam'
 
           - task: AzureCLI@2
             displayName: 'Apply Infraestructure'
             inputs:
               azureSubscription: $(azureServiceConnection)
-              scriptType: 'bash'
+              scriptType: 'ps'
               scriptLocation: 'inlineScript'
-              inlineScript: |
-                az deployment group create \
-                  --resource-group $(resourceGroupName) \
-                  --parameters infra/parameters/dev.bicepparam
+              inlineScript: 'az deployment group create --resource-group $(resourceGroupName) --parameters infra/parameters/dev.bicepparam'
 
   - stage: Application
     displayName: '2. App - Build and Deploy AI Python Function'
