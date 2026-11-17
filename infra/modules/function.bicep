@@ -9,7 +9,7 @@ param aiEndpoint string
 resource hostingPlan 'Microsoft.Web/serverfarms@2022-09-01' = {
   name: 'plan-${functionAppName}'
   location: location
-  sku: { name: 'B1', tier: 'Basic' } // Plan App Service Básico en Linux (Compatible con Free Trial)
+  sku: { name: 'Y1', tier: 'Dynamic' } // Basic App Service Plan (Free Trial)
   properties: { reserved: true }
 }
 
